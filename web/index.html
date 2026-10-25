@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- Title (English + Arabic) -->
+  <title>Diane Pharmacy | صيدلية ديان</title>
+
+  <!-- Basic SEO -->
+  <meta
+    name="description"
+    content="Diane Pharmacy - your trusted local pharmacy. Medicines, health advice, wellness and family care. صيدلية ديان - صيدليتكم المحلية الموثوقة."
+  >
+  <meta name="author" content="Diane Pharmacy">
+
+  <!-- Browser theme (address bar colour on phones) -->
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Prevent unwanted phone-number auto detection -->
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/pharmacy_logo.jpg?v=2">
+  <link rel="shortcut icon" href="assets/images/pharmacy_logo.jpg?v=2">
+  <link rel="apple-touch-icon" href="assets/images/pharmacy_logo.jpg?v=2">
+  <meta name="apple-mobile-web-app-title" content="Diane Pharmacy">
+
+  <!-- Web app manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Open Graph / Facebook / WhatsApp / Instagram / Messenger -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Diane Pharmacy">
+  <meta property="og:title" content="Diane Pharmacy | صيدلية ديان">
+  <meta
+    property="og:description"
+    content="Your trusted local pharmacy - medicines, health advice and family care. صيدليتكم المحلية الموثوقة."
+  >
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="ar_AR">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Diane Pharmacy | صيدلية ديان">
+  <meta
+    name="twitter:description"
+    content="Your trusted local pharmacy - medicines, health advice and family care. صيدليتكم المحلية الموثوقة."
+  >
+
+  <!--
+    ADD THESE TWO LINES AFTER DEPLOYMENT, with the real permanent URL.
+    Link previews need ABSOLUTE https:// addresses. Put the image file in the
+    web/ folder (for example web/og-image.png, 1200x630 or square 1200x1200).
+
+    <meta property="og:url" content="https://YOUR-FINAL-URL/">
+    <meta property="og:image" content="https://YOUR-FINAL-URL/og-image.png">
+    <meta name="twitter:image" content="https://YOUR-FINAL-URL/og-image.png">
+    <link rel="canonical" href="https://YOUR-FINAL-URL/">
+  -->
+
+  <!-- Simple loading screen shown until the website is ready -->
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: #F6F8FC;
+    }
+
+    #splash {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #F6F8FC;
+      color: #2563EB;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      transition: opacity 0.35s ease;
+    }
+
+    #splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #splash .spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid rgba(37, 99, 235, 0.18);
+      border-top-color: #2563EB;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="splash">
+    <div class="spinner"></div>
+    <div>Diane Pharmacy</div>
+  </div>
+
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('splash');
+      if (!splash) return;
+      splash.classList.add('hide');
+      setTimeout(function () { splash.remove(); }, 400);
+    });
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
