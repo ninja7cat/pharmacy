@@ -76,6 +76,12 @@ class BusinessConfig {
   // declared in pubspec.yaml.
   static const String logoAsset = 'assets/images/pharmacy_logo.jpg';
 
+  // Optional photos. Leave empty to show the built-in illustrations, or put
+  // a file in assets/images/ and write its path here, for example
+  // 'assets/images/pharmacy_hero.jpg'.
+  static const String heroImageAsset = '';
+  static const String aboutImageAsset = '';
+
   // ═════════════════════════════════════════════════════════════
   // ABOUT THE PHARMACY
   // ═════════════════════════════════════════════════════════════
