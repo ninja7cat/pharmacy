@@ -1,12 +1,19 @@
 import 'package:flutter/foundation.dart';
 
+import 'language_storage.dart';
+
 /// Holds the current website language.
 ///
-/// The first language is taken from the visitor's browser/device:
-/// Arabic browsers open the Arabic site, everyone else gets English.
+/// The first language is the one the visitor picked on an earlier visit.
+/// On a first visit it comes from the browser/device: Arabic browsers open
+/// the Arabic site, everyone else gets English.
 class LanguageController extends ChangeNotifier {
   LanguageController._()
-    : _isArabic = PlatformDispatcher.instance.locale.languageCode == 'ar';
+    : _isArabic = switch (readSavedLanguage()) {
+        'ar' => true,
+        'en' => false,
+        _ => PlatformDispatcher.instance.locale.languageCode == 'ar',
+      };
 
   static final LanguageController instance = LanguageController._();
 
@@ -16,6 +23,7 @@ class LanguageController extends ChangeNotifier {
 
   void toggle() {
     _isArabic = !_isArabic;
+    saveLanguage(_isArabic ? 'ar' : 'en');
     notifyListeners();
   }
 
@@ -25,6 +33,7 @@ class LanguageController extends ChangeNotifier {
     }
 
     _isArabic = value;
+    saveLanguage(_isArabic ? 'ar' : 'en');
     notifyListeners();
   }
 }

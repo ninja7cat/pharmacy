@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../config/business_config.dart';
+import '../config/opening_hours.dart';
 import '../l10n/app_strings.dart';
 import '../l10n/language_controller.dart';
 import '../theme/app_theme.dart';
@@ -640,60 +641,34 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   // LIVE OPENING STATUS
   // ═════════════════════════════════════════════════════════════
 
-  /// The current date and time in the pharmacy's own time zone.
-  DateTime _pharmacyNow() {
-    return DateTime.now().toUtc().add(
-      const Duration(hours: BusinessConfig.utcOffsetHours),
-    );
-  }
-
   _OpenStatus _computeStatus() {
-    final DateTime now = _pharmacyNow();
-    final int minutes = now.hour * 60 + now.minute;
-    final bool closedToday = BusinessConfig.closedWeekdays.contains(
-      now.weekday,
-    );
+    final OpeningState state = OpeningHours.at(OpeningHours.pharmacyNow());
 
-    final bool isOpen =
-        !closedToday &&
-        minutes >= BusinessConfig.openMinutes &&
-        minutes < BusinessConfig.closeMinutes;
-
-    if (isOpen) {
+    if (state.isOpen) {
       return _OpenStatus(
         isOpen: true,
         title: _t.statusOpen,
         detail: _t.closesAt(_t.clock(BusinessConfig.closeMinutes)),
-        weekday: now.weekday,
+        weekday: state.weekday,
       );
     }
 
     final String openTime = _t.clock(BusinessConfig.openMinutes);
 
-    if (!closedToday && minutes < BusinessConfig.openMinutes) {
-      return _OpenStatus(
-        isOpen: false,
-        title: _t.statusClosed,
-        detail: _t.opensTodayAt(openTime),
-        weekday: now.weekday,
-      );
-    }
-
-    int day = now.weekday;
-    int daysAhead = 0;
-
-    do {
-      day = day % 7 + 1;
-      daysAhead++;
-    } while (BusinessConfig.closedWeekdays.contains(day) && daysAhead < 7);
+    final String detail = switch (state.nextOpening) {
+      NextOpening.laterToday => _t.opensTodayAt(openTime),
+      NextOpening.tomorrow => _t.opensTomorrowAt(openTime),
+      NextOpening.laterDay => _t.opensDayAt(
+        _t.weekdayLong(state.opensOnWeekday),
+        openTime,
+      ),
+    };
 
     return _OpenStatus(
       isOpen: false,
       title: _t.statusClosed,
-      detail: daysAhead == 1
-          ? _t.opensTomorrowAt(openTime)
-          : _t.opensDayAt(_t.weekdayLong(day), openTime),
-      weekday: now.weekday,
+      detail: detail,
+      weekday: state.weekday,
     );
   }
 

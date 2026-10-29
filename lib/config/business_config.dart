@@ -64,10 +64,8 @@ class BusinessConfig {
   static const String googleMaps =
       'https://www.google.com/maps/search/?api=1&query=649R%2B65Q%20Aleppo%2C%20Syria';
 
-  // IMPORTANT:
-  // This will eventually be the permanent public website URL.
-  // We will replace it after deployment.
-  static const String website = 'https://yourpharmacy.com';
+  // The live public address of the website.
+  static const String website = 'https://dianepharmacy.netlify.app';
 
   // ═════════════════════════════════════════════════════════════
   // BRANDING
@@ -77,20 +75,6 @@ class BusinessConfig {
   // (lowercase, exact extension) and assets/images/ must be
   // declared in pubspec.yaml.
   static const String logoAsset = 'assets/images/pharmacy_logo.jpg';
-
-  // Optional hero image:
-  //
-  // static const String heroImageAsset =
-  //     'assets/images/pharmacy_hero.jpg';
-
-  static const String heroImageAsset = '';
-
-  // Optional pharmacy/about image:
-  //
-  // static const String aboutImageAsset =
-  //     'assets/images/pharmacy.jpg';
-
-  static const String aboutImageAsset = '';
 
   // ═════════════════════════════════════════════════════════════
   // ABOUT THE PHARMACY
