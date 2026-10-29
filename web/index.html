@@ -25,9 +25,9 @@
   <meta name="format-detection" content="telephone=no">
 
   <!-- Icons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/pharmacy_logo.jpg?v=2">
-  <link rel="shortcut icon" href="assets/images/pharmacy_logo.jpg?v=2">
-  <link rel="apple-touch-icon" href="assets/images/pharmacy_logo.jpg?v=2">
+  <link rel="icon" type="image/jpeg" sizes="32x32" href="assets/assets/images/pharmacy_logo.jpg?v=3">
+  <link rel="shortcut icon" href="assets/assets/images/pharmacy_logo.jpg?v=3">
+  <link rel="apple-touch-icon" href="assets/assets/images/pharmacy_logo.jpg?v=3">
   <meta name="apple-mobile-web-app-title" content="Diane Pharmacy">
 
   <!-- Web app manifest -->
@@ -75,16 +75,17 @@
   <link rel="preload" href="assets/assets/fonts/Cairo-SemiBold.ttf" as="fetch" crossorigin>
   <link rel="preload" href="assets/assets/fonts/Cairo-Bold.ttf" as="fetch" crossorigin>
   <link rel="preload" href="assets/assets/fonts/Cairo-ExtraBold.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/fonts/MaterialIcons-Regular.otf" as="fetch" crossorigin>
   <link rel="preload" href="assets/assets/images/pharmacy_logo.jpg" as="fetch" crossorigin>
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Simple loading screen shown until the website is ready -->
+  <!-- Loading screen in the site's own colours, shown until it is ready -->
   <style>
     html, body {
       margin: 0;
       height: 100%;
-      background: #F6F8FC;
+      background: #F6F5F1;
     }
 
     #splash {
@@ -94,38 +95,69 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      background: #F6F8FC;
-      color: #2563EB;
+      gap: 18px;
+      background: #F6F5F1;
+      color: #013973;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 18px;
       font-weight: 700;
-      transition: opacity 0.35s ease;
+      letter-spacing: -0.2px;
+      transition: opacity 0.45s ease, transform 0.45s ease;
     }
 
     #splash.hide {
       opacity: 0;
+      transform: scale(1.04);
       pointer-events: none;
     }
 
-    #splash .spinner {
-      width: 34px;
-      height: 34px;
-      border: 3px solid rgba(37, 99, 235, 0.18);
-      border-top-color: #2563EB;
+    #splash .ring {
+      position: relative;
+      width: 92px;
+      height: 92px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #splash .ring::before {
+      content: "";
+      position: absolute;
+      inset: 0;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      border: 3px solid rgba(29, 79, 163, 0.14);
+      border-top-color: #1D4FA3;
+      border-right-color: #D2B070;
+      animation: spin 0.9s linear infinite;
+    }
+
+    #splash .logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #EEF2F7 center / 118% no-repeat
+        url("assets/assets/images/pharmacy_logo.jpg");
+      animation: breathe 1.8s ease-in-out infinite;
     }
 
     @keyframes spin {
       to { transform: rotate(360deg); }
+    }
+
+    @keyframes breathe {
+      50% { transform: scale(0.94); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #splash .ring::before,
+      #splash .logo { animation-duration: 3s; }
     }
   </style>
 </head>
 
 <body>
   <div id="splash">
-    <div class="spinner"></div>
+    <div class="ring"><div class="logo"></div></div>
     <div>Diane Pharmacy</div>
   </div>
 
@@ -134,7 +166,7 @@
       var splash = document.getElementById('splash');
       if (!splash) return;
       splash.classList.add('hide');
-      setTimeout(function () { splash.remove(); }, 400);
+      setTimeout(function () { splash.remove(); }, 500);
     });
   </script>
 

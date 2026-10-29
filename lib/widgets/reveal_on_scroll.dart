@@ -86,8 +86,23 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     if (newPosition != _position) {
       _position?.removeListener(_checkVisibility);
       _position = newPosition;
-      _position?.addListener(_checkVisibility);
+
+      if (!_started) {
+        _position?.addListener(_checkVisibility);
+      }
     }
+  }
+
+  /// Once the reveal has started there is nothing left to watch: stop
+  /// listening to every scroll frame and cancel the pending re-checks.
+  void _stopWatching() {
+    _position?.removeListener(_checkVisibility);
+
+    for (final Timer timer in _timers) {
+      timer.cancel();
+    }
+
+    _timers.clear();
   }
 
   void _safetyReveal() {
@@ -113,6 +128,7 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     }
 
     _started = true;
+    _stopWatching();
     _controller.value = 1;
   }
 
@@ -174,6 +190,7 @@ class _RevealOnScrollState extends State<RevealOnScroll>
     }
 
     _started = true;
+    _stopWatching();
 
     if (widget.delay > Duration.zero) {
       await Future<void>.delayed(widget.delay);

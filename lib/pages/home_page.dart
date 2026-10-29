@@ -72,6 +72,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final ValueNotifier<double> _scrollProgress = ValueNotifier<double>(0);
   final ValueNotifier<int> _minuteTick = ValueNotifier<int>(0);
 
+  // Bumped when the header / scroll-to-top / marquee state changes while
+  // scrolling, so only those small parts rebuild instead of the whole page.
+  final ValueNotifier<int> _scrollUi = ValueNotifier<int>(0);
+
   Timer? _statusTimer;
 
   bool _scrolled = false;
@@ -147,6 +151,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _wheelTicker.dispose();
     _scrollProgress.dispose();
     _minuteTick.dispose();
+    _scrollUi.dispose();
 
     super.dispose();
   }
@@ -366,18 +371,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final bool nearTop = offset < 1700;
     final int active = _computeActiveSection();
 
-    if (scrolled != _scrolled ||
+    final bool changed =
+        scrolled != _scrolled ||
         showTop != _showScrollToTop ||
         nearTop != _nearTop ||
-        active != _activeSection ||
-        _mobileMenuOpen) {
+        active != _activeSection;
+
+    if (!changed && !_mobileMenuOpen) {
+      return;
+    }
+
+    _scrolled = scrolled;
+    _showScrollToTop = showTop;
+    _nearTop = nearTop;
+    _activeSection = active;
+
+    if (_mobileMenuOpen) {
+      // Closing the menu changes the page layout: full rebuild (rare).
       setState(() {
-        _scrolled = scrolled;
-        _showScrollToTop = showTop;
-        _nearTop = nearTop;
-        _activeSection = active;
         _mobileMenuOpen = false;
       });
+    } else {
+      // Only the header, scroll-to-top button and marquee depend on these.
+      _scrollUi.value++;
     }
   }
 
@@ -875,11 +891,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               child: Listener(
                 behavior: HitTestBehavior.translucent,
                 onPointerSignal: _onWheelSignal,
-                child: _buildHeader(
-                  context,
-                  isMobile,
-                  isTablet,
-                  horizontalPadding,
+                child: ListenableBuilder(
+                  listenable: _scrollUi,
+                  builder: (context, _) => _buildHeader(
+                    context,
+                    isMobile,
+                    isTablet,
+                    horizontalPadding,
+                  ),
                 ),
               ),
             ),
@@ -887,20 +906,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Positioned(
               right: isMobile ? 16 : 28,
               bottom: isMobile ? 20 + bottomInset : 28,
-              child: IgnorePointer(
-                ignoring: !_showScrollToTop,
-                child: AnimatedOpacity(
-                  opacity: _showScrollToTop ? 1 : 0,
-                  duration: const Duration(milliseconds: 250),
-                  child: AnimatedSlide(
-                    offset: _showScrollToTop
-                        ? Offset.zero
-                        : const Offset(0, 0.7),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOutBack,
-                    child: _ScrollTopButton(
-                      onTap: _scrollToTop,
-                      tooltip: _t.backToTop,
+              child: ListenableBuilder(
+                listenable: _scrollUi,
+                builder: (context, _) => IgnorePointer(
+                  ignoring: !_showScrollToTop,
+                  child: AnimatedOpacity(
+                    opacity: _showScrollToTop ? 1 : 0,
+                    duration: const Duration(milliseconds: 250),
+                    child: AnimatedSlide(
+                      offset: _showScrollToTop
+                          ? Offset.zero
+                          : const Offset(0, 0.7),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutBack,
+                      child: _ScrollTopButton(
+                        onTap: _scrollToTop,
+                        tooltip: _t.backToTop,
+                      ),
                     ),
                   ),
                 ),
@@ -1813,10 +1835,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
           Positioned.fill(
             child: RepaintBoundary(
-              child: _Marquee(
-                items: items,
-                running: _nearTop,
-                fontSize: isMobile ? 19 : 23,
+              child: ListenableBuilder(
+                listenable: _scrollUi,
+                builder: (context, _) => _Marquee(
+                  items: items,
+                  running: _nearTop,
+                  fontSize: isMobile ? 19 : 23,
+                ),
               ),
             ),
           ),
