@@ -63,6 +63,22 @@
     <link rel="canonical" href="https://YOUR-FINAL-URL/">
   -->
 
+  <!--
+    Faster loading: start downloading everything the app needs right away,
+    in parallel, instead of Flutter fetching each file one after another.
+  -->
+  <link rel="preload" href="flutter_bootstrap.js" as="script">
+  <link rel="preload" href="main.dart.js" as="script">
+  <link rel="preload" href="assets/FontManifest.json" as="fetch" crossorigin>
+  <link rel="preload" href="assets/AssetManifest.bin.json" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Cairo-Regular.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Cairo-SemiBold.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Cairo-Bold.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/fonts/Cairo-ExtraBold.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="assets/assets/images/pharmacy_logo.jpg" as="fetch" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <!-- Simple loading screen shown until the website is ready -->
   <style>
     html, body {

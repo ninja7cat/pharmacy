@@ -1,0 +1,6 @@
+# Let browsers keep fonts and images, so return visits load faster.
+/assets/assets/fonts/*
+  Cache-Control: public, max-age=2592000
+
+/assets/assets/images/*
+  Cache-Control: public, max-age=604800
