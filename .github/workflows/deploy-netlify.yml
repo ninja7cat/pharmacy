@@ -25,12 +25,21 @@ jobs:
             echo "::error::NETLIFY_AUTH_TOKEN secret is missing or empty"
             exit 1
           fi
+          SITE_ID=$(curl -fsS -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+            "https://api.netlify.com/api/v1/sites?filter=all&per_page=100" \
+            | jq -r '.[] | select(.name=="dianepharmacy") | .id' | head -1)
+          if [ -z "$SITE_ID" ]; then
+            names=$(curl -fsS -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" "https://api.netlify.com/api/v1/sites?filter=all&per_page=100" | jq -r '[.[].name] | join(", ")')
+            echo "::error::Site dianepharmacy not found for this token. Sites visible: ${names:-none}"
+            exit 1
+          fi
+          echo "Deploying to site $SITE_ID"
           set +e
-          npx --yes netlify-cli deploy --dir=build/web --prod --site=dianepharmacy --auth="$NETLIFY_AUTH_TOKEN" > deploy.log 2>&1
+          npx --yes netlify-cli deploy --no-build --dir=build/web --prod --site="$SITE_ID" --auth="$NETLIFY_AUTH_TOKEN" > deploy.log 2>&1
           code=$?
           cat deploy.log
           if [ $code -ne 0 ]; then
-            msg=$(grep -v '^\s*$' deploy.log | tail -8 | tr '\n' ' ' | sed "s/$NETLIFY_AUTH_TOKEN/***/g")
+            msg=$(grep -v '^\s*$' deploy.log | sed 's/\x1b\[[0-9;]*m//g' | tail -8 | tr '\n' ' ' | sed "s/$NETLIFY_AUTH_TOKEN/***/g")
             echo "::error::Netlify deploy failed: $msg"
           fi
           exit $code
